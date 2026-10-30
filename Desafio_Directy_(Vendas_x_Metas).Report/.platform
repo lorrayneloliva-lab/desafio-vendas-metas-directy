@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Desafio_Directy_(Vendas_x_Metas)"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ac1335b2-133c-4a9f-8fc8-68f2e87585a6"
+  }
+}

@@ -1,0 +1,45 @@
+relationship 01b7a94a-cdb8-4245-ab39-30669eee4e33
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Vendas.'Data Envio'
+	toColumn: LocalDateTable_222358d4-4983-40f0-bfd8-1c42e11561d0.Date
+
+relationship AutoDetected_3d4eb649-b04a-48ba-a33d-8a9366ad77d3
+	fromColumn: Vendas.'ID Cliente'
+	toColumn: Cliente.'ID Cliente'
+
+relationship AutoDetected_074aaeb2-2446-4ebf-8ed0-8e322be6814e
+	fromColumn: Vendas.'ID Produto'
+	toColumn: Produto.'ID Produto'
+
+relationship AutoDetected_78bc2787-f4db-43eb-bd6a-335417d284f6
+	fromColumn: Produto.'ID Subcategoria'
+	toColumn: Subcategoria.idSubcategoria
+
+relationship 456bcf28-665f-5b40-4662-67662fad8e7e
+	fromColumn: Vendas.'Data Venda'
+	toColumn: Calendario.Date
+
+relationship 85e3e6a4-5f32-2d35-c022-183f4dcb6218
+	fromColumn: Metas.Categoria
+	toColumn: DimCategoria.Categoria
+
+relationship fb1c45f2-145f-2cf8-bd21-6ff2f0224a51
+	fromColumn: Produto.Categoria
+	toColumn: DimCategoria.Categoria
+
+relationship 17341264-7525-a7e6-3218-d7af49677b81
+	fromColumn: Cliente.Continente
+	toColumn: DimContinente.Continente
+
+relationship cf58be33-f403-a2ec-0e61-9b14c14b5502
+	fromColumn: Metas.Continente
+	toColumn: DimContinente.Continente
+
+relationship c983897a-eaea-4c76-c25e-dafc13000641
+	fromColumn: Calendario.Ano
+	toColumn: DimAno.Ano
+
+relationship 19919935-8f9a-8d2c-c185-0af114f038ee
+	fromColumn: Metas.Ano
+	toColumn: DimAno.Ano
+

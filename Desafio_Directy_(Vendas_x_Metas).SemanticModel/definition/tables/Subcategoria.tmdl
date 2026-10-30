@@ -1,0 +1,43 @@
+table Subcategoria
+	lineageTag: 40aa5afc-56f0-41d8-894d-abfb5bfc22a5
+
+	column idSubcategoria
+		dataType: int64
+		formatString: 0
+		lineageTag: 47268d94-6d28-4b58-ae6f-c8dfed8bc609
+		summarizeBy: none
+		sourceColumn: idSubcategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcategoria
+		dataType: string
+		lineageTag: 81a379a5-5586-4ac2-9887-1ef2f70db504
+		summarizeBy: none
+		sourceColumn: Subcategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: b92e5ba5-43a8-48a0-bfa6-a54db0471cf5
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Subcategoria = m
+		mode: import
+		source =
+				let
+				    Fonte = Json.Document(File.Contents(CaminhoPasta&"Subcategoria.json")),
+				    #"Convertido para Tabela" = Table.FromList(Fonte, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+				    #"Column1 Expandido" = Table.ExpandRecordColumn(#"Convertido para Tabela", "Column1", {"idSubcategoria", "Subcategoria", "Categoria"}, {"idSubcategoria", "Subcategoria", "Categoria"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Column1 Expandido",{{"idSubcategoria", Int64.Type}, {"Subcategoria", type text}, {"Categoria", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

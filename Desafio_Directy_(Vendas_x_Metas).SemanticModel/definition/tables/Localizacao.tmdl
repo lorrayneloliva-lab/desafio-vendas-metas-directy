@@ -1,0 +1,73 @@
+table Localizacao
+	lineageTag: 7dc64510-1abd-4d5e-9f77-4f93b097f310
+
+	column 'ID Localização'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9443f7bf-bdcd-427f-9ae3-bb408650e534
+		summarizeBy: sum
+		sourceColumn: ID Localização
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo Localização'
+		dataType: string
+		lineageTag: d66f529f-cb38-46ef-909f-de74b3260828
+		summarizeBy: none
+		sourceColumn: Tipo Localização
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cidade
+		dataType: string
+		lineageTag: 9bbf2dfb-fa82-4a96-90b6-77b13e222f82
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estado
+		dataType: string
+		lineageTag: 5d82e594-e27c-4c2c-bdbb-9af105434b01
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	column País
+		dataType: string
+		lineageTag: adb479fb-6bf5-45ad-a138-c4bf3f9ecc3f
+		summarizeBy: none
+		sourceColumn: País
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continente
+		dataType: string
+		lineageTag: 9d33f2db-c722-4a30-8fa9-7a78343b09c6
+		summarizeBy: none
+		sourceColumn: Continente
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Localizacao = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(CaminhoPasta&"Localizacao.csv"),[Delimiter=";", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Linhas Superiores Removidas" = Table.Skip(Fonte,2),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"ID Localização", type text}, {"Tipo Localização", type text}, {"Cidade", type text}, {"Estado", type text}, {"País", type text}}),
+				    #"Personalização Adicionada" = Table.AddColumn(#"Tipo Alterado", "Continente", each if [ID Localização] = "Continente:"
+				then [Tipo Localização]
+				else null),
+				    #"Preenchido Abaixo" = Table.FillDown(#"Personalização Adicionada",{"Continente"}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Preenchido Abaixo", each [País] <> null and [País] <> ""),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"ID Localização", Int64.Type}})
+				in
+				    #"Tipo Alterado1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

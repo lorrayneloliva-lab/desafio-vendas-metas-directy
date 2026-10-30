@@ -1,0 +1,31 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Vendas","Cliente","Subcategoria","Localizacao","Produto","Metas 2017","Metas 2018","Metas 2019","Metas","Medidas","CaminhoPasta"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Vendas
+ref table DateTableTemplate_0570b0cb-08a4-4ded-be6a-44f5b16d4694
+ref table LocalDateTable_222358d4-4983-40f0-bfd8-1c42e11561d0
+ref table Cliente
+ref table Subcategoria
+ref table Localizacao
+ref table Produto
+ref table Metas
+ref table Calendario
+ref table DimCategoria
+ref table DimContinente
+ref table DimAno
+ref table Medidas
+
+ref cultureInfo pt-BR
+

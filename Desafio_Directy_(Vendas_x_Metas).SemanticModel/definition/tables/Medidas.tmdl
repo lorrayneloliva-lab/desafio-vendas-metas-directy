@@ -1,0 +1,228 @@
+table Medidas
+	lineageTag: 8d07fb11-2922-4647-8eef-e22d29144807
+
+	measure 'Meta Total' = SUM(Metas[Valor da Meta])
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 1ec6b4a9-d551-4c57-832a-7786ddc85f56
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Atingimento da Meta (%)' = DIVIDE([Faturamento Total],[Meta Total],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 485242ce-630d-4a7b-9c6c-4e7c4b496849
+
+	measure 'Diferença Faturamento 2017 x 2018' = [Faturamento 2018] - [Faturamento 2017]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: a8398346-32f6-48b0-b51f-1cbe3654ab58
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Faturamento 2017' = CALCULATE([Faturamento Total], DimAno[Ano] = 2017)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 37e3879c-58d6-4ab2-8773-0cac733bcf42
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Faturamento 2018' = CALCULATE([Faturamento Total], DimAno[Ano] = 2018)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 738d5718-6a04-4179-ab5f-6f40b1c7514f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Faturamento Total' = ```
+			SUM(Vendas[Valor Venda]) 
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: a3b091fc-ab47-48f6-874b-049b4438b6da
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Participação no Faturamento por categoria (%)' =
+			
+			DIVIDE(
+			    [Faturamento Total],
+			    CALCULATE(
+			        [Faturamento Total],
+			        REMOVEFILTERS(DimCategoria)
+			    ),
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: b51ec1d7-a755-4a26-8bd8-eb9e06af1994
+
+	measure 'Variação Faturamento 2017 x 2018 (%)' = DIVIDE([Faturamento 2018] - [Faturamento 2017], [Faturamento 2017], 0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: ac9c56ed-30fc-4777-aa79-fb8f965baa84
+
+	measure 'Faturamento 2019' = CALCULATE([Faturamento Total], DimAno[Ano] = 2019)
+		lineageTag: 07ade60f-7433-4f21-8cdb-f1465c6cec89
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Participação no Faturamento por continente (%)' =
+			
+			DIVIDE(
+			    [Faturamento Total],
+			    CALCULATE(
+			        [Faturamento Total],
+			        REMOVEFILTERS(DimContinente)
+			    ),
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a44ce04f-961e-439b-8fdb-67f17efee8b8
+
+	measure 'Meta 2018' = CALCULATE([Meta Total], DimAno[Ano] = 2018)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 92ec4ae4-7e7d-4636-ac52-c08f871385c4
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Meta 2017' = CALCULATE([Meta Total], DimAno[Ano] = 2017)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: fd0c4a06-bbaa-47bf-8c2c-b3d84974ba37
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Atingimento da Meta 2017 (%)' = DIVIDE([Faturamento 2017],[Meta 2017],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f54ebe58-5717-4f53-9bdf-a2ff49122d31
+
+	measure 'Atingimento da Meta 2018 (%)' = DIVIDE([Faturamento 2018],[Meta 2018],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: d8ccec7a-0632-4725-a836-82e22ceca788
+
+	measure 'Meta 2019' = CALCULATE([Meta Total], DimAno[Ano] = 2019)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 667f39bc-dea3-47c1-b358-b405844ba143
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Atingimento da Meta 2019 (%)' = DIVIDE([Faturamento 2019],[Meta 2019],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 56555d74-2617-46db-a3ec-caf551f1d19e
+
+	measure 'Diferença Atingemento da Meta' = [Meta Total] - [Faturamento Total]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: d7b6976d-5add-469e-8010-4ee8f931f964
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Top 3 - Comparação dos Rankings' =
+			
+			VAR RankingPeriodo =
+			    SELECTCOLUMNS(
+			        TOPN(
+			            3,
+			            ALLSELECTED(Subcategoria[Subcategoria]),
+			            [Faturamento Total], DESC,
+			            Subcategoria[Subcategoria], ASC
+			        ),
+			        "Nome", Subcategoria[Subcategoria]
+			    )
+			
+			VAR Ranking2018 =
+			    SELECTCOLUMNS(
+			        TOPN(
+			            3,
+			            ALLSELECTED(Subcategoria[Subcategoria]),
+			            [Faturamento 2018], DESC,
+			            Subcategoria[Subcategoria], ASC
+			        ),
+			        "Nome", Subcategoria[Subcategoria]
+			    )
+			
+			VAR QuantidadeComum =
+			    COUNTROWS(
+			        INTERSECT(RankingPeriodo, Ranking2018)
+			    )
+			
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        COUNTROWS(RankingPeriodo) < 3 ||
+			        COUNTROWS(Ranking2018) < 3,
+			        "Não há 3 subcategorias para comparar",
+			        QuantidadeComum = 3,
+			        "✅ Mesmas subcategorias no périodo completo.",
+			        "Não — apenas " & QuantidadeComum & " de 3 são iguais"
+			    )
+		lineageTag: fed512e1-6fe4-4674-8c71-9d28e2ce3d5f
+
+	measure 'Participação Desktops (%)' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        [Faturamento Total],
+			        Subcategoria[Subcategoria] = "Desktops"
+			    ),
+			    CALCULATE(
+			        [Faturamento Total],
+			        REMOVEFILTERS(Subcategoria),
+			        REMOVEFILTERS(DimCategoria)
+			    ),
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 8f2aaff8-3360-47eb-b781-886084b46a50
+
+	measure 'Faturamento até 16 Março' =
+			
+			VAR AnoSelecionado =
+			    SELECTEDVALUE(DimAno[Ano])
+			RETURN
+			    CALCULATE(
+			        [Faturamento Total],
+			        REMOVEFILTERS(Calendario),
+			        DATESBETWEEN(
+			            Calendario[Date],
+			            DATE(AnoSelecionado, 1, 1),
+			            DATE(AnoSelecionado, 3, 16)
+			        )
+			    )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 6906463b-326c-49e4-8342-ae157a0104c6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Variação Faturamento 2018 x 2019 (%)' = DIVIDE([Faturamento 2019] - [Faturamento 2018], [Faturamento 2018], 0)
+		lineageTag: d17c24b4-1a52-49d4-9a56-5791846b7003
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Variação Representatividade Desktops (%)' =
+			
+			VAR Participacao2017 =
+			    CALCULATE(
+			        [Participação Desktops (%)],
+			        DimAno[Ano] = 2017
+			    )
+			VAR Participacao2018 =
+			    CALCULATE(
+			        [Participação Desktops (%)],
+			        DimAno[Ano] = 2018
+			    )
+			RETURN
+			    DIVIDE(
+			        Participacao2018 - Participacao2017,
+			        Participacao2017,
+			        0
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: b1fe5c10-615d-4592-9cf4-990e2317bd10
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Tipo Alterado",{{"Coluna 1", "Metas"}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Colunas Renomeadas",{"Metas"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

@@ -1,0 +1,51 @@
+table Metas
+	lineageTag: 079ab8aa-aaff-48f9-8394-d3eaf360487c
+
+	column Categoria
+		dataType: string
+		lineageTag: ede6d5d0-a127-47b2-aab7-764bddf3baa9
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continente
+		dataType: string
+		lineageTag: b6675fdb-68b0-462d-ad99-f462c34ae29f
+		summarizeBy: none
+		sourceColumn: Continente
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Valor da Meta'
+		dataType: double
+		lineageTag: 50507cef-b29a-4be6-b408-e253b43ebb3a
+		summarizeBy: sum
+		sourceColumn: Valor da Meta
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		lineageTag: 59e6a159-ee4a-4e2f-90e0-345dde45ad4e
+		summarizeBy: none
+		sourceColumn: Ano
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Metas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.Combine({#"Metas 2017", #"Metas 2018", #"Metas 2019"}),
+				    #"Colunas Reordenadas" = Table.ReorderColumns(Fonte,{"Ano", "Continente", "Categoria", "Valor da Meta"})
+				in
+				    #"Colunas Reordenadas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

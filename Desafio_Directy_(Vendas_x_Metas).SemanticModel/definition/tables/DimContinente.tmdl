@@ -1,0 +1,24 @@
+table DimContinente
+	lineageTag: ed46a76e-67d6-4fc3-9065-b7dde30d26a9
+
+	column Continente
+		lineageTag: 5b98bda6-01b0-4170-8211-693ab6ec7d15
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Continente]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimContinente = calculated
+		mode: import
+		source =
+				
+				DISTINCT(
+				    UNION(
+				        SELECTCOLUMNS(Cliente, "Continente", Cliente[Continente]),
+				        SELECTCOLUMNS(Metas, "Continente", Metas[Continente])
+				    )
+				)
+
+	annotation PBI_Id = 8e9de3aa14314672836736c9cd56de3b
+

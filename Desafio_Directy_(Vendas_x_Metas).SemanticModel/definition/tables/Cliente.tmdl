@@ -1,0 +1,83 @@
+table Cliente
+	lineageTag: 1574ebf5-cf9b-464a-b173-06a889be562a
+
+	column 'ID Cliente'
+		dataType: int64
+		formatString: 0
+		lineageTag: d3fb02da-d7ae-4b16-9f01-6b55fa027a50
+		summarizeBy: none
+		sourceColumn: ID Cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo Cliente'
+		dataType: string
+		lineageTag: de111042-f0e8-4723-b45f-aa0c0ff7d8e5
+		summarizeBy: none
+		sourceColumn: Tipo Cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nome Cliente'
+		dataType: string
+		lineageTag: 875bd550-bd9c-4420-8841-43bfbb9872d8
+		summarizeBy: none
+		sourceColumn: Nome Cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cidade
+		dataType: string
+		lineageTag: c84f91e7-2d7b-4e82-b47b-ec70fb0cf9de
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estado
+		dataType: string
+		lineageTag: cad49b68-fbf0-4641-81c6-f0df51baeffb
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	column País
+		dataType: string
+		lineageTag: e4b237f3-a67f-4fb7-b663-17541ce68236
+		summarizeBy: none
+		sourceColumn: País
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continente
+		dataType: string
+		lineageTag: 2137af51-9ce8-405e-b65d-e0732aa559a1
+		summarizeBy: none
+		sourceColumn: Continente
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Cliente = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents(CaminhoPasta&"Cliente.xlsx"), null, true),
+				    Cliente_Sheet = Fonte{[Item="Cliente",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Cliente_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"ID Cliente", Int64.Type}, {"ID Cidade", Int64.Type}, {"Primeiro Nome", type text}, {"Sobrenome", type text}, {"Data Nascimento", type text}, {"Estado Civil", type text}, {"Gênero", type text}, {"Email", type text}, {"Educação", type text}, {"Ocupação", type text}, {"Tipo Cliente", type text}, {"Nome Empresa", type text}}),
+				    #"Coluna Mesclada Inserida" = Table.AddColumn(#"Tipo Alterado", "Nome Cliente", each Text.Combine({[Primeiro Nome], [Sobrenome]}, " "), type text),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Coluna Mesclada Inserida","'","",Replacer.ReplaceText,{"Data Nascimento"}),
+				    #"Tipo Alterado com Localidade" = Table.TransformColumnTypes(#"Valor Substituído", {{"Data Nascimento", type date}}, "en-US"),
+				    #"Consultas Mescladas" = Table.NestedJoin(#"Tipo Alterado com Localidade", {"ID Cidade"}, Localizacao, {"ID Localização"}, "Localizacao", JoinKind.LeftOuter),
+				    #"Localizacao Expandido" = Table.ExpandTableColumn(#"Consultas Mescladas", "Localizacao", {"Cidade", "Estado", "País", "Continente"}, {"Cidade", "Estado", "País", "Continente"}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Localizacao Expandido",{"Primeiro Nome", "Sobrenome", "Email"}),
+				    #"Erros Substituídos" = Table.ReplaceErrorValues(#"Colunas Removidas", {{"Data Nascimento", null}}),
+				    #"Colunas Removidas1" = Table.RemoveColumns(#"Erros Substituídos",{"ID Cidade", "Data Nascimento", "Estado Civil", "Gênero", "Educação", "Ocupação", "Nome Empresa"})
+				in
+				    #"Colunas Removidas1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

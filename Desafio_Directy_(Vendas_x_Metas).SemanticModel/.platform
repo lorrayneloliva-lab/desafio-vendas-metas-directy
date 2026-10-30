@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Desafio_Directy_(Vendas_x_Metas)"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "35fcab48-e23f-400f-8519-23c25757e5db"
+  }
+}

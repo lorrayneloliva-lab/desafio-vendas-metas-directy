@@ -1,0 +1,67 @@
+table Calendario
+	lineageTag: 0e85e894-65cc-4947-9345-2daab5bf37fd
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: Long Date
+		lineageTag: df532da3-7ada-43bf-bf5a-9d798a4a54b1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Ano
+		formatString: 0
+		lineageTag: 17fc36b4-af79-4c21-b9eb-b9da16c2520e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês Número'
+		formatString: 0
+		lineageTag: fc956a9b-f1bd-47a3-b4a5-fba6c88219ab
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Mês Número]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês
+		lineageTag: f390e1e2-a5dd-48c5-886b-a5efd9cb07eb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano-Mês
+		lineageTag: 176a2ce5-3f4b-4ff4-9b74-54b4fab7798a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano-Mês]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendario = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS(
+				    CALENDAR(
+				        MIN(Vendas[Data Venda]),
+				        MAX(Vendas[Data Venda])
+				    ),
+				    "Ano", YEAR([Date]),
+				    "Mês Número", MONTH([Date]),
+				    "Mês", FORMAT([Date], "mmmm"),
+				    "Ano-Mês", FORMAT([Date], "yyyy-MM")
+				)
+
+	annotation PBI_Id = c5597d6cc5364ca3aab13f0e8cad0c97
+

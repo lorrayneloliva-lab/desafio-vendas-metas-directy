@@ -1,0 +1,79 @@
+table Produto
+	lineageTag: a66bceeb-18b3-4d5a-963e-76f19ff9b444
+
+	column 'ID Produto'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a83124b-9c68-4244-be4a-80c9d3128b01
+		summarizeBy: none
+		sourceColumn: ID Produto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Produto
+		dataType: string
+		lineageTag: 2db1a335-b1cf-4c9f-8018-213dd15ccbf4
+		summarizeBy: none
+		sourceColumn: Produto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID Subcategoria'
+		dataType: int64
+		formatString: 0
+		lineageTag: b770f358-184a-4515-9141-a4b0c61164e9
+		summarizeBy: none
+		sourceColumn: ID Subcategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcategoria
+		dataType: string
+		lineageTag: 45c4d6a2-a30e-45ad-9121-373b4550cada
+		summarizeBy: none
+		sourceColumn: Subcategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca
+		dataType: string
+		lineageTag: 1ee829cd-cb9a-4775-ab67-574a648fd6d2
+		summarizeBy: none
+		sourceColumn: Marca
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: b3403b6b-59ec-48a7-964a-be7349846c0f
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Produto = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(CaminhoPasta&"Produto.csv"),[Delimiter=";", Columns=2, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Linhas Superiores Removidas" = Table.Skip(Fonte,2),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+				    #"Personalização Adicionada" = Table.AddColumn(#"Cabeçalhos Promovidos", "Marca", each if [Produto] = "Marca:"
+				then [Subcategoria]
+				else null),
+				    #"Preenchido Abaixo" = Table.FillDown(#"Personalização Adicionada",{"Marca"}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Preenchido Abaixo", each ([Produto] <> "" and [Produto] <> "Marca:")),
+				    #"Texto Extraído Após o Delimitador" = Table.TransformColumns(#"Linhas Filtradas", {{"Produto", each Text.AfterDelimiter(_, "# "), type text}, {"Subcategoria", each Text.AfterDelimiter(_, "# "), type text}}),
+				    #"Dividir Coluna por Delimitador" = Table.SplitColumn(#"Texto Extraído Após o Delimitador", "Produto", Splitter.SplitTextByDelimiter(" - ", QuoteStyle.Csv), {"Produto.1", "Produto.2"}),
+				    #"Dividir Coluna por Delimitador1" = Table.SplitColumn(#"Dividir Coluna por Delimitador", "Subcategoria", Splitter.SplitTextByDelimiter(" - ", QuoteStyle.Csv), {"Subcategoria.1", "Subcategoria.2"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Dividir Coluna por Delimitador1",{{"Produto.1", Int64.Type}, {"Produto.2", type text}, {"Subcategoria.1", Int64.Type}, {"Subcategoria.2", type text}}),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Tipo Alterado",{{"Produto.1", "ID Produto"}, {"Produto.2", "Produto"}, {"Subcategoria.1", "ID Subcategoria"}, {"Subcategoria.2", "Subcategoria"}}),
+				    #"Consultas Mescladas" = Table.NestedJoin(#"Colunas Renomeadas", {"ID Subcategoria"}, Subcategoria, {"idSubcategoria"}, "Subcategoria.1", JoinKind.LeftOuter),
+				    #"Subcategoria.1 Expandido" = Table.ExpandTableColumn(#"Consultas Mescladas", "Subcategoria.1", {"Categoria"}, {"Categoria"})
+				in
+				    #"Subcategoria.1 Expandido"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

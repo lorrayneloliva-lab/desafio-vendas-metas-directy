@@ -1,0 +1,24 @@
+table DimCategoria
+	lineageTag: 19d6964a-bf35-435f-8004-82bd9401cf02
+
+	column Categoria
+		lineageTag: 1eb16247-47c1-477b-9c21-53eff8495822
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Categoria]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimCategoria = calculated
+		mode: import
+		source =
+				
+				DISTINCT(
+				    UNION(
+				        SELECTCOLUMNS(Produto, "Categoria", Produto[Categoria]),
+				        SELECTCOLUMNS(Metas, "Categoria", Metas[Categoria])
+				    )
+				)
+
+	annotation PBI_Id = a1f7a8469e78463b9f58252d350b714e
+

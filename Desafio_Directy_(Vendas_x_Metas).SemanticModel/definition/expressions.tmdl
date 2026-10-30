@@ -1,0 +1,68 @@
+/// Endereço do diretório.
+expression CaminhoPasta = "C:\Users\lorra\OneDrive\Área de Trabalho\desafios_vendas_x_metas\Banco de dados\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 647fd81e-937b-450a-ab20-c7299c831414
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Text
+
+expression 'Metas 2017' =
+		let
+		    Fonte = Excel.Workbook(File.Contents(CaminhoPasta&"Metas.xlsx"), null, false),
+		    #"2017_sheet" = Fonte{[Item="2017",Kind="Sheet"]}[Data],
+		    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+		    #"Linhas Superiores Removidas" = Table.Skip(#"2017_sheet", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Cabeçalhos Promovidos", each ([#"Ano: 2017"] <> "Total")),
+		    #"Outras Colunas Não Dinâmicas" = Table.UnpivotOtherColumns(#"Linhas Filtradas", {"Ano: 2017"}, "Atributo", "Valor"),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Outras Colunas Não Dinâmicas",{{"Ano: 2017", "Categoria"}, {"Atributo", "Continente"}, {"Valor", "Valor da Meta"}}),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Colunas Renomeadas", "Ano", each 2017),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Personalização Adicionada",{{"Valor da Meta", type number}, {"Ano", Int64.Type}})
+		in
+		    #"Tipo Alterado"
+	lineageTag: 47f559a9-3a63-40fe-86c9-41dce3df78f1
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'Metas 2018' =
+		let
+		    Fonte = Excel.Workbook(File.Contents(CaminhoPasta&"Metas.xlsx"), null, false),
+		    #"2018_sheet" = Fonte{[Item="2018",Kind="Sheet"]}[Data],
+		    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+		    #"Linhas Superiores Removidas" = Table.Skip(#"2018_sheet", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Cabeçalhos Promovidos", each ([#"Ano: 2018"] <> "Total")),
+		    #"Outras Colunas Não Dinâmicas" = Table.UnpivotOtherColumns(#"Linhas Filtradas", {"Ano: 2018"}, "Atributo", "Valor"),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Outras Colunas Não Dinâmicas", "Ano", each 2018),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Personalização Adicionada",{{"Ano: 2018", "Categoria"}, {"Atributo", "Continente"}, {"Valor", "Valor da Meta"}}),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Colunas Renomeadas",{{"Valor da Meta", type number}, {"Ano", Int64.Type}})
+		in
+		    #"Tipo Alterado"
+	lineageTag: ef2ea679-2320-4c50-89e0-b026c9991f54
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'Metas 2019' =
+		let
+		    Fonte = Excel.Workbook(File.Contents(CaminhoPasta&"Metas.xlsx"), null, false),
+		    #"2019_sheet" = Fonte{[Item="2019",Kind="Sheet"]}[Data],
+		    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+		    #"Linhas Superiores Removidas" = Table.Skip(#"2019_sheet", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Cabeçalhos Promovidos", each ([#"Ano: 2019"] <> "Total")),
+		    #"Outras Colunas Não Dinâmicas" = Table.UnpivotOtherColumns(#"Linhas Filtradas", {"Ano: 2019"}, "Atributo", "Valor"),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Outras Colunas Não Dinâmicas", "Ano", each 2019),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Personalização Adicionada",{{"Ano: 2019", "Categoria"}, {"Atributo", "Continente"}, {"Valor", "Valor da Meta"}}),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Colunas Renomeadas",{{"Valor da Meta", type number}, {"Ano", Int64.Type}})
+		in
+		    #"Tipo Alterado"
+	lineageTag: 9b6e0382-b7de-42e5-ae33-8d5e4a4d9985
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

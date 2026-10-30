@@ -1,0 +1,134 @@
+table Vendas
+	lineageTag: 34684b13-506a-43e1-b9da-11e53404483a
+
+	column 'Data Venda'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e53e6b3c-ba7f-4def-b255-7d36fa082c7b
+		summarizeBy: none
+		sourceColumn: Data Venda
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Data Envio'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d08a9f4a-a484-4944-a9a5-8793f5b0080e
+		summarizeBy: none
+		sourceColumn: Data Envio
+
+		variation Variação
+			isDefault
+			relationship: 01b7a94a-cdb8-4245-ab39-30669eee4e33
+			defaultHierarchy: LocalDateTable_222358d4-4983-40f0-bfd8-1c42e11561d0.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'ID Produto'
+		dataType: int64
+		formatString: 0
+		lineageTag: d1c46bc3-cf3f-4c7c-a2f0-3fbfab953a8e
+		summarizeBy: none
+		sourceColumn: ID Produto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ID Cliente'
+		dataType: int64
+		formatString: 0
+		lineageTag: d584ff32-40e2-4a0d-9358-6550b1b689b3
+		summarizeBy: none
+		sourceColumn: ID Cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'No. Venda'
+		dataType: string
+		lineageTag: 3c88d490-d7db-44c5-8957-d0e8c7b2c659
+		summarizeBy: none
+		sourceColumn: No. Venda
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Custo Unitário'
+		dataType: double
+		lineageTag: ae7f0fe4-16d2-4ef4-887b-d73af68a489d
+		summarizeBy: sum
+		sourceColumn: Custo Unitário
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Preço Unitário'
+		dataType: double
+		lineageTag: 0e4788b5-af30-42de-af0f-055cbaeb144d
+		summarizeBy: sum
+		sourceColumn: Preço Unitário
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Quantidade
+		dataType: int64
+		formatString: 0
+		lineageTag: 1489ee97-aa54-4947-919b-1980ad7a6835
+		summarizeBy: sum
+		sourceColumn: Quantidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Valor Desconto'
+		dataType: double
+		lineageTag: e1c83255-aa2e-41d8-a705-0679a8beface
+		summarizeBy: sum
+		sourceColumn: Valor Desconto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Valor Custo'
+		dataType: double
+		lineageTag: 14622b12-fd0f-43ca-bbf0-6603901bcd3d
+		summarizeBy: sum
+		sourceColumn: Valor Custo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Valor Venda'
+		dataType: double
+		lineageTag: f3eabbca-25f9-471c-8ad6-762262723c8c
+		summarizeBy: sum
+		sourceColumn: Valor Venda
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Vendas = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents(CaminhoPasta&"Vendas.xlsx"), null, true),
+				    Vendas_Sheet = Fonte{[Item="Vendas",Kind="Sheet"]}[Data],
+				    #"Linhas Superiores Removidas" = Table.Skip(Vendas_Sheet,4),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+				    #"Personalização Adicionada" = Table.AddColumn(#"Cabeçalhos Promovidos", "Valor Custo", each [Custo Unitário]*[Quantidade]),
+				    #"Personalização Adicionada1" = Table.AddColumn(#"Personalização Adicionada", "Valor Venda", each ([Preço Unitário]*[Quantidade])-[Valor Desconto]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Personalização Adicionada1",{{"Data Venda", type date}, {"Data Envio", type date}, {"ID Produto", Int64.Type}, {"ID Subcategoria", Int64.Type}, {"ID Cliente", Int64.Type}, {"ID Cidade", Int64.Type}, {"No. Venda", type text}, {"Custo Unitário", type number}, {"Preço Unitário", type number}, {"Quantidade", Int64.Type}, {"Valor Desconto", type number}, {"Valor Custo", type number}, {"Valor Venda", type number}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"ID Subcategoria", "ID Cidade"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

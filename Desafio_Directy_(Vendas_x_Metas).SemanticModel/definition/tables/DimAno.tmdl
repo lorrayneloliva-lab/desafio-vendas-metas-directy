@@ -1,0 +1,25 @@
+table DimAno
+	lineageTag: d901ff9c-c2a3-4381-8e7f-b278afbe6320
+
+	column Ano
+		formatString: 0
+		lineageTag: b42c51d7-da8f-4af9-a167-5d1850412e48
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimAno = calculated
+		mode: import
+		source =
+				
+				DISTINCT(
+				    UNION(
+				        SELECTCOLUMNS(Calendario, "Ano", Calendario[Ano]),
+				        SELECTCOLUMNS(Metas, "Ano", Metas[Ano])
+				    )
+				)
+
+	annotation PBI_Id = 3f71ebfc1c1648138256a457726608d0
+
